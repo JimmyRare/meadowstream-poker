@@ -1,0 +1,27 @@
+.position-grid {
+  background-color: #333;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  grid-gap: 1px;
+}
+
+.position-grid div {
+  background-color: #edaa25;
+  color: #fff;
+  cursor: pointer;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 50px;
+}
+
+.position-grid .position-highlight {
+  background-color: var(--theme-green-color);
+}
+
+.position-grid .position-selected {
+  background-color: var(--theme-red-color);
+}

@@ -1,0 +1,80 @@
+.trainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.trainer-rng {
+  align-self: flex-end;
+  color: #fff;
+}
+
+.trainer-choices {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.trainer-holecards {
+  display: flex;
+}
+
+.trainer-answer {
+  border: 3px solid var(--theme-gray-color);
+  border-radius: 5px;
+  color: #fff;
+  font-size: 2rem;
+  left: 55%;
+  padding: 20px;
+  position: absolute;
+  text-align: center;
+  text-transform: uppercase;
+  top: 40%;
+  transform: translateX(-50%);
+}
+
+.trainer-answer-wrong {
+  border-color: var(--theme-red-color);
+  color: var(--theme-red-color);
+}
+
+.trainer-answer-correct {
+  border-color: var(--theme-green-color);
+  color: var(--theme-green-color);
+}
+
+.button {
+  background: #777;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 10px 10px;
+  text-align: center;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.25);
+  min-width: 150px;
+}
+
+.button-fold {
+  background-color: var(--grid-fold-color);
+}
+
+[class*="button-r"] {
+  background-color: var(--grid-raise-color);
+}
+
+[class*="button-c"] {
+  background-color: var(--grid-call-color);
+}
+
+.button-rai {
+  background-color: var(--grid-allin-color);
+}
+
+.button-new {
+  align-self: flex-end;
+  background-color: var(--theme-dark-color);
+  margin-top: 10px;
+}

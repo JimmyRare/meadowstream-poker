@@ -1,0 +1,41 @@
+.card {
+  background-color: var(--theme-gray-color);
+  border: 3px solid #fff;
+  border-radius: 5px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+  height: 70px;
+  width: 50px;
+}
+
+.card-rank {
+  align-self: flex-start;
+}
+
+.card-suit {
+  font-size: 1.5rem;
+}
+
+.card-s {
+  background-color: #424242;
+  border: none;
+}
+
+.card-h {
+  background-color: #8b0901;
+  border: none;
+}
+
+.card-d {
+  background-color: #0481c0;
+  border: none;
+}
+
+.card-c {
+  background-color: #258337;
+  border: none;
+}

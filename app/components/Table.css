@@ -1,0 +1,8 @@
+.table {
+  border: 5px solid var(--theme-gray-color);
+  border-radius: 50%;
+  height: 480px;
+  margin: 10vh;
+  position: relative;
+  width: 680px;
+}

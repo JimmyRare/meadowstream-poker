@@ -1,0 +1,65 @@
+.player {
+  display: flex;
+  position: absolute;
+}
+
+.player-position {
+  align-items: center;
+  background-color: #222;
+  border: 5px solid var(--theme-gray-color);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  font-size: 2rem;
+  height: 90px;
+  justify-content: center;
+  margin-right: 10px;
+  text-transform: uppercase;
+  width: 90px;
+}
+
+.player-is-hero .player-position {
+  border-color: var(--theme-green-color);
+}
+
+.player-is-villain .player-position {
+  border-color: var(--theme-yellow-color);
+}
+
+.player-cards {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.player-bu {
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-20%);
+}
+
+.player-co {
+  bottom: 20%;
+  right: -125px;
+}
+
+.player-sb {
+  bottom: 20%;
+  left: -20px;
+}
+
+.player-bb {
+  top: 20%;
+  left: -20px;
+}
+
+.player-mp {
+  top: 20%;
+  right: -125px;
+}
+
+.player-ep {
+  top: -40px;
+  left: 50%;
+  transform: translateX(-20%);
+}
