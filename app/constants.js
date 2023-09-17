@@ -1,4 +1,4 @@
-export const positionGrid = [
+export const positionsGrid = [
   "EP",
   "MPvsEP",
   "COvsEP",
@@ -37,7 +37,14 @@ export const positionGrid = [
   "BB",
 ];
 
-export const positions = ["ep", "mp", "co", "bu", "sb", "bb"];
+export const actionsMap = {
+  r: "Raise",
+  c: "Call",
+  rai: "Allin",
+  f: "Fold",
+};
+
+export const tablePositions = ["ep", "mp", "co", "bu", "sb", "bb"];
 export const suits = ["s", "h", "d", "c"];
 const ranks = [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
 const types = ["s", "o"];

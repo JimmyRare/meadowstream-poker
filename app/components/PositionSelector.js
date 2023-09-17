@@ -1,16 +1,16 @@
 import "./PositionSelector.css";
-import { positionGrid } from "../constants";
+import { positionsGrid } from "../constants";
 
-export default function PositionSelector({ positionHandler, position }) {
+export default function PositionSelector({ positionsHandler, positions }) {
   return (
     <div className="position-grid">
-      {positionGrid.map((pos) => {
+      {positionsGrid.map((pos) => {
         let cssString = "";
         if (pos.length == 2) {
           cssString += "position-highlight ";
         }
 
-        if (position == pos) {
+        if (positions == pos) {
           cssString += "position-selected";
         }
         return (
@@ -18,7 +18,7 @@ export default function PositionSelector({ positionHandler, position }) {
             key={pos}
             className={cssString}
             id={pos}
-            onClick={() => positionHandler(pos)}
+            onClick={() => positionsHandler(pos)}
           >
             {pos.substr(-2)}
           </div>

@@ -1,20 +1,21 @@
 import "./Table.css";
 import Player from "./Player";
-import { positions } from "../constants";
+import { tablePositions } from "../constants";
 
-export default function Table({ position, heroCards }) {
+export default function Table({ positions, heroCards }) {
+  console.log(positions);
   return (
     <div className="flex justify-center">
       <div className="table">
-        {positions.map((p) => {
+        {tablePositions.map((p) => {
           let isHero = false;
           let isVillain = false;
 
-          if (p === position.slice(0, 2).toLowerCase()) {
+          if (p === positions.slice(0, 2).toLowerCase()) {
             isHero = true;
           }
 
-          if (p === position.slice(-2).toLowerCase()) {
+          if (p === positions.slice(-2).toLowerCase()) {
             isVillain = true;
           }
 

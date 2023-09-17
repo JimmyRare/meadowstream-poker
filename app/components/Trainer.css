@@ -20,30 +20,6 @@
   display: flex;
 }
 
-.trainer-answer {
-  border: 3px solid var(--theme-gray-color);
-  border-radius: 5px;
-  color: #fff;
-  font-size: 2rem;
-  left: 55%;
-  padding: 20px;
-  position: absolute;
-  text-align: center;
-  text-transform: uppercase;
-  top: 40%;
-  transform: translateX(-50%);
-}
-
-.trainer-answer-wrong {
-  border-color: var(--theme-red-color);
-  color: var(--theme-red-color);
-}
-
-.trainer-answer-correct {
-  border-color: var(--theme-green-color);
-  color: var(--theme-green-color);
-}
-
 .button {
   background: #777;
   border-radius: 5px;

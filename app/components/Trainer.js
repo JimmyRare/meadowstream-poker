@@ -1,36 +1,21 @@
 import "./Trainer.css";
-import Card from "./Card";
 import Table from "./Table";
-import { gridStringSorted, suits } from "../constants";
+import Answer from "./Answer";
+import Choices from "./Choices";
+import { gridStringSorted, suits, actionsMap } from "../constants";
 import { useEffect, useState } from "react";
 
-export default function Trainer({ strategy, position, solution }) {
-  const [holecards, setHolecards] = useState(["As", "Ah"]);
-  const [rng, setRng] = useState(0);
-  const [cardsString, setCardsString] = useState("AA");
-  const [choices, setChoices] = useState([]);
-  const [answerObj, setAnswerObj] = useState(getAnswerObj);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [range, setRange] = useState(getRange);
-  const [result, setResult] = useState("");
+export default function Trainer({ positions, solution }) {
+  const [isAutoHand, setIsAutoHand] = useState(false);
+  const [trainerState, setTrainerState] = useState({});
 
   useEffect(() => {
-    setRange((r) => getRange());
-    dealCards();
-  }, [position]);
+    dealHeroCards();
+  }, [positions]);
 
-  function getChoices() {
-    let result = [];
-
-    for (let action in strategy) {
-      result.push(action);
-    }
-
-    return result;
-  }
-
-  function getRange() {
+  function getHeroRange() {
     let range = [];
+    let strategy = solution[positions];
 
     if (strategy.Range == "All") {
       range = gridStringSorted;
@@ -43,8 +28,20 @@ export default function Trainer({ strategy, position, solution }) {
     return range;
   }
 
-  function dealCards() {
-    let tempSuits = suits;
+  function getChoices() {
+    let result = [];
+    let strategy = solution[positions];
+
+    for (let action in strategy) {
+      result.push(action);
+    }
+
+    return result;
+  }
+
+  function dealHeroCards() {
+    let tempSuits = [...suits];
+    let range = getHeroRange();
 
     let cards = range[Math.floor(Math.random() * range.length)];
     console.log("cards", cards);
@@ -68,18 +65,31 @@ export default function Trainer({ strategy, position, solution }) {
       console.error("non-valid notation?");
     }
 
-    console.log(card1, card2);
-    setRng(parseInt(Math.random() * 100));
-    setCardsString(cards);
-    setHolecards([card1, card2]);
-    setChoices(getChoices());
-    setAnswerObj(getAnswerObj());
-    setShowAnswer(false);
+    let answerObj = getAnswerObj(cards);
+    let rng = parseInt(Math.random() * 100) + 1;
+
+    setTrainerState((prev) => {
+      return {
+        rng: rng,
+        cardsString: cards,
+        holecards: [card1, card2],
+        showAnswer: isAutoHand ? true : false,
+        userChoice: null,
+        answerObj: answerObj,
+        answer: getCorrectRngAnswer(answerObj, rng),
+        lastAnswer: {
+          userChoice: prev.userChoice,
+          answerObj: prev.answerObj,
+          answer: prev.answer,
+        },
+      };
+    });
   }
 
-  function getAnswerObj() {
-    let index = gridStringSorted.indexOf(cardsString);
+  function getAnswerObj(cards) {
+    let index = gridStringSorted.indexOf(cards);
     let answerObj = {};
+    let strategy = solution[positions];
 
     for (let action in strategy) {
       answerObj[action] = strategy[action][index] * 100;
@@ -88,66 +98,96 @@ export default function Trainer({ strategy, position, solution }) {
     return answerObj;
   }
 
-  function getCorrectRngAnswer() {
-    let answerObj = getAnswerObj();
+  function getCorrectRngAnswer(answerObj, rng) {
     let reversedKeys = Object.keys(answerObj).reverse();
     let sum = 0;
     let answer = "none found";
     let answerFound = false;
 
+    console.log("answerObj:", answerObj);
+
     reversedKeys.forEach((key) => {
       sum += answerObj[key];
+      console.log("answerObj key", key, sum, rng);
+
       if (!answerFound && rng <= sum) {
         answer = key;
         answerFound = true;
       }
     });
 
+    console.log("correct answer is", answer);
+
     return answer;
   }
 
   function handleChoice(choice) {
-    let answer = getCorrectRngAnswer();
-    if (choice == answer) {
-      setResult("Correct");
-    } else {
-      setResult("Wrong");
+    console.log("choice made:", choice);
+    setTrainerState({ ...trainerState, userChoice: choice, showAnswer: true });
+
+    if (isAutoHand) {
+      dealHeroCards();
     }
-    setShowAnswer(true);
+  }
+
+  function onIsAutoHandToggle() {
+    setTrainerState({ ...trainerState, showAnswer: false, lastAnswer: {} });
+    setIsAutoHand(!isAutoHand);
+    dealHeroCards();
   }
 
   return (
-    <div className="trainer">
-      <div className="trainer-rng">Low rng: {rng}</div>
-      <Table position={position} heroCards={holecards} />
-      {showAnswer && (
-        <div
-          className={`trainer-answer ${
-            result === "Correct"
-              ? "trainer-answer-correct"
-              : "trainer-answer-wrong"
-          }`}
-        >
-          {result}
-        </div>
-      )}
-      <div className="trainer-choices">
-        {choices.map((choice) => {
-          if (choice == "Range") return;
-          return (
-            <button
-              key={choice}
-              onClick={() => handleChoice(choice)}
-              type="button"
-              className={`button button-${choice.toLowerCase()}`} // #todo constant logic
-            >
-              {choice}
-            </button>
-          );
-        })}
+    <div className="relative flex flex-col justify-center">
+      <div className="trainer-rng">Low rng: {trainerState.rng}</div>
+      <div className="text-white text-xs">
+        Debug:
+        <br />
+        Correct answer: {trainerState.answer}
+        <br />
+        User choice: {trainerState.userChoice}
+        <br />
+        Rng: {trainerState.rng}
+        <br />
       </div>
-      <div className="button button-new" onClick={dealCards}>
+      <Table positions={positions} heroCards={trainerState.holecards} />
+      {isAutoHand ? (
+        <Answer
+          show={trainerState.showAnswer}
+          isCorrect={
+            trainerState.lastAnswer.answer == trainerState.lastAnswer.userChoice
+          }
+          userChoice={trainerState.lastAnswer.userChoice}
+          userChoiceValue={
+            trainerState.lastAnswer.answerObj &&
+            trainerState.lastAnswer.answerObj[
+              trainerState.lastAnswer.userChoice
+            ]
+          }
+        />
+      ) : (
+        <Answer
+          show={trainerState.showAnswer}
+          isCorrect={trainerState.answer == trainerState.userChoice}
+          userChoice={trainerState.userChoice}
+          userChoiceValue={
+            trainerState.answerObj &&
+            trainerState.answerObj[trainerState.userChoice]
+          }
+        />
+      )}
+      <Choices choices={getChoices()} onChoiceChange={handleChoice} />
+      <div className="button button-new" onClick={dealHeroCards}>
         New hand
+      </div>
+      <div className="flex justify-end items-center">
+        <label className="text-white">
+          <input
+            type="checkbox"
+            checked={isAutoHand}
+            onChange={() => onIsAutoHandToggle()}
+          />{" "}
+          Auto deal new hand
+        </label>
       </div>
     </div>
   );

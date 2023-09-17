@@ -8,27 +8,23 @@ import Trainer from "./components/Trainer";
 
 export default function Home() {
   const [solution, setSolution] = useState(NL500_GTO_SMALLER);
-  const [position, setPosition] = useState("BBvsBU");
+  const [positions, setPositions] = useState("BBvsBU");
 
-  function onPositionChange(pos) {
-    setPosition(pos);
-    console.log(`position set to ${pos}`);
+  function onPositionsChange(pos) {
+    setPositions(pos);
+    console.log(`positions set to ${pos}`);
   }
 
   return (
     <>
-      <h1 className="text-3xl font-bold">Position: {position}</h1>
+      <h1 className="text-3xl font-bold">Position: {positions}</h1>
       <main>
-        <Trainer
-          strategy={solution[position]}
-          position={position}
-          solution={solution}
-        />
+        <Trainer positions={positions} solution={solution} />
         <PositionSelector
-          positionHandler={onPositionChange}
-          position={position}
+          positionsHandler={onPositionsChange}
+          positions={positions}
         />
-        <RangeViewer strategy={solution[position]} />
+        <RangeViewer strategy={solution[positions]} />
       </main>
     </>
   );
