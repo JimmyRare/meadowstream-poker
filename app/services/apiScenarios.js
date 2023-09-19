@@ -12,9 +12,14 @@ export async function getScenarios() {
 }
 
 export async function getStartingRange(scenarioId) {
+  if (scenarioId === null) {
+    return null;
+  }
+
   const { data, error } = await supabase
     .from("Scenarios")
-    .select(`${scenarioId}`);
+    .select("*")
+    .eq("id", `${scenarioId}`);
 
   if (error) {
     console.error(error);

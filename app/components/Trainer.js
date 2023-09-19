@@ -61,27 +61,34 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
     }
   });
 
-  const { data: range, isLoading } = useQuery({
-    queryKey: ["startingRange"],
-    queryFn: async () => {
-      let range = [];
-      let id = filteredScenarios[0].starting_range_id;
-      if (id === null) {
-        range = gridStringSorted;
-      } else {
-        let startingRange = await getStartingRange(id);
-        range = gridStringSorted.filter((string, i) => {
-          return startingRange[i] > 0;
-        });
-      }
-
-      return range;
-    },
+  const {
+    data: startingRange,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["startingRange", filteredScenarios[0].starting_range_id],
+    queryFn: () => getStartingRange(filteredScenarios[0].starting_range_id),
   });
 
   if (isLoading) return <div>Loading</div>;
+  if (error) return <div>Error</div>;
 
   console.log("filteredScenarios", filteredScenarios);
+  console.log(startingRange);
+
+  function getHeroRange() {
+    let range = [];
+    if (startingRange === null) {
+      range = gridStringSorted;
+    } else {
+      range = gridStringSorted.filter((string, i) => {
+        return startingRange[0].strategy[i] > 0;
+      });
+    }
+
+    console.log("range", range);
+    return range;
+  }
 
   function getHolecardsFromCardNotation(cards) {
     let tempSuits = [...suits];
@@ -109,6 +116,8 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
   }
 
   function dealHeroCards() {
+    let range = getHeroRange();
+
     // save previous answer if it exists
     if (userChoice) {
       onAddHistory({
