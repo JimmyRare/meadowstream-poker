@@ -70,9 +70,6 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
     queryFn: () => getStartingRange(filteredScenarios[0].starting_range_id),
   });
 
-  if (isLoading) return <div>Loading</div>;
-  if (error) return <div>Error</div>;
-
   console.log("filteredScenarios", filteredScenarios);
   console.log(startingRange);
 
@@ -217,8 +214,8 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
           </div>
         </div>
 
-        <div>
-          <FontAwesomeIcon className="mr-2 text-right" icon={faDiceSix} />
+        <div className="text-right">
+          <FontAwesomeIcon className="mr-2" icon={faDiceSix} />
           {rng}
           <div className="text-4xl font-bold mt-5 text-right">
             {correctCount} / {handCount}
