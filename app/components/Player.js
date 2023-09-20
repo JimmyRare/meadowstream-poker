@@ -1,9 +1,16 @@
 import "./Player.css";
 import Card from "./Card";
 
-export default function Player({ position, isHero, isVillain, holecards }) {
+export default function Player({
+  position,
+  isHero,
+  isVillain,
+  holecards,
+  invested,
+}) {
   let cssClass = getCssActivePlayersString();
-  let cssPosition = getCssPositionString();
+  let cssPlayerPosition = getPlayerPositionString();
+  let cssInvested = getInvestedString();
 
   function getCssActivePlayersString() {
     if (isHero) {
@@ -15,7 +22,7 @@ export default function Player({ position, isHero, isVillain, holecards }) {
     }
   }
 
-  function getCssPositionString() {
+  function getPlayerPositionString() {
     switch (position) {
       case "ep":
         return "-top-10 left-2/4 -translate-x-1/4";
@@ -34,13 +41,40 @@ export default function Player({ position, isHero, isVillain, holecards }) {
     }
   }
 
+  function getInvestedString() {
+    switch (position) {
+      case "ep":
+        return "-bottom-10 left-6 -translate-x-1/4";
+      case "mp":
+        return "-bottom-10 left-2";
+      case "co":
+        return "-top-10 left-2";
+      case "bu":
+        return "-top-10 left-6 -translate-x-1/4";
+      case "sb":
+        return "-top-10 left-2";
+      case "bb":
+        return "-bottom-10 left-2";
+      default:
+        return;
+    }
+  }
+
   return (
-    <div className={`flex absolute ${cssPosition}`}>
+    <div className={`flex absolute ${cssPlayerPosition}`}>
+      {invested > 0 && (
+        <div
+          className={`text-white text-center text-2xl absolute w-20 ${cssInvested}`}
+        >
+          {invested}
+        </div>
+      )}
       <div
         className={`player-position w-24 h-24 flex items-center border-4 rounded-full ${cssClass}`}
       >
         {position}
       </div>
+
       <div className="flex items-center gap-0.5">
         <Card notation={holecards ? holecards[0] : null} />
         <Card notation={holecards ? holecards[1] : null} />

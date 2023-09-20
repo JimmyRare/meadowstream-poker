@@ -7,9 +7,10 @@ export default function Answer({ correctAnswer, userChoice, answerObj }) {
   console.log("a", correctAnswer, userChoice, answerObj);
 
   let isCorrect = false;
+  let choiceAction = userChoice.split(" ")[0].toLowerCase();
 
   if (correctAnswer && userChoice) {
-    isCorrect = correctAnswer[0] == userChoice[0];
+    isCorrect = correctAnswer[0] == choiceAction;
   }
 
   let cssString = isCorrect
@@ -25,8 +26,8 @@ export default function Answer({ correctAnswer, userChoice, answerObj }) {
           className="mr-5"
           icon={isCorrect ? faCheck : faXmark}
         />
-        {userChoice[0].charAt(0).toUpperCase() + userChoice[0].slice(1)}{" "}
-        {Math.round(answerObj[userChoice[0]]) + "%"}
+        {userChoice}&nbsp;
+        {Math.round(answerObj[choiceAction])}%
       </div>
     )
   );

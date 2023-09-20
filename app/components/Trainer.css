@@ -24,14 +24,14 @@
   background-color: var(--grid-fold-color);
 }
 
-[class*="button-r"] {
-  background-color: var(--grid-raise-color);
-}
-
-[class*="button-c"] {
+.button-call {
   background-color: var(--grid-call-color);
 }
 
-.button-rai {
+.button-raise {
+  background-color: var(--grid-raise-color);
+}
+
+.button-allin {
   background-color: var(--grid-allin-color);
 }

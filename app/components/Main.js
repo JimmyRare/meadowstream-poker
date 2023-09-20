@@ -25,8 +25,6 @@ export default function Main() {
     queryFn: getScenarios,
   });
 
-  console.log(scenarios);
-
   if (isLoading) return <div>Loading data...</div>;
 
   function handleAddHistory(data) {

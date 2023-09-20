@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import "./Trainer.css";
 import Table from "./Table";
+import Player from "./Player";
 import Answer from "./Answer";
 import Choices from "./Choices";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,7 +13,12 @@ import {
   daDiceFive,
   faDiceSix,
 } from "@fortawesome/free-solid-svg-icons";
-import { gridStringSorted, suits, actionsMap } from "../constants";
+import {
+  gridStringSorted,
+  suits,
+  actionsMap,
+  tablePositions,
+} from "../constants";
 import { useEffect, useState } from "react";
 import { getStartingRange } from "../services/apiScenarios";
 
@@ -70,9 +76,6 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
     queryFn: () => getStartingRange(filteredScenarios[0].starting_range_id),
   });
 
-  console.log("filteredScenarios", filteredScenarios);
-  console.log(startingRange);
-
   function getHeroRange() {
     let range = [];
     if (startingRange === null) {
@@ -83,7 +86,6 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
       });
     }
 
-    console.log("range", range);
     return range;
   }
 
@@ -139,12 +141,18 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
     return parseInt(Math.floor(Math.random() * 100) + 1);
   }
 
+  // Setup an object with frequencies for each action with current hand
   function getAnswerObj(cards) {
     let index = gridStringSorted.indexOf(cards);
     let answerObj = {};
 
     filteredScenarios.map((scenario) => {
-      answerObj[scenario.action] = scenario.strategy[index] * 100;
+      if (scenario.size == 100) {
+        // is allin raise
+        answerObj["allin"] = scenario.strategy[index] * 100;
+      } else {
+        answerObj[scenario.action] = scenario.strategy[index] * 100;
+      }
     });
 
     console.log(answerObj);
@@ -153,33 +161,30 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
   }
 
   function getCorrectRngAnswer(answerObj, rng) {
-    let reversedKeys = Object.keys(answerObj).reverse();
+    let keys = ["allin", "raise", "call", "fold"];
     let sum = 0;
     let answer = "none found";
     let answerFound = false;
 
-    console.log("answerObj:", answerObj);
+    keys.map((key) => {
+      if (answerObj[key]) {
+        sum += answerObj[key];
+        console.log("answerObj key", key, sum, rng);
 
-    reversedKeys.forEach((key) => {
-      sum += answerObj[key];
-      console.log("answerObj key", key, sum, rng);
-
-      if (!answerFound && rng <= sum) {
-        answer = [key, answerObj[key]];
-        answerFound = true;
+        if (!answerFound && rng <= sum) {
+          answer = [key, answerObj[key]];
+          answerFound = true;
+        }
       }
     });
-
-    console.log("correct answer is", answer);
 
     return answer;
   }
 
   function handleChoice(choice) {
-    console.log("choice made:", choice, correctAnswer);
     setHandCount((n) => n + 1);
 
-    if (correctAnswer[0] === choice[0]) {
+    if (correctAnswer[0] === choice.toLowerCase()) {
       setCorrectCount((n) => n + 1);
     }
 
@@ -192,7 +197,38 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
 
   function onIsAutoHandToggle() {
     setIsAutoHand((a) => !a);
-    // dealHeroCards();
+    dealHeroCards();
+  }
+
+  function isHero(p) {
+    return p == positions.substring(0, 2).toLowerCase();
+  }
+
+  function isVillain(p) {
+    return p == positions.slice(-2).toLowerCase() && positions.length > 2;
+  }
+
+  function getInvested(p) {
+    let s = filteredScenarios[0];
+    let invested = 0;
+
+    if (p == "sb") {
+      invested = 0.5;
+    }
+
+    if (p == "bb") {
+      invested = 1;
+    }
+
+    if (p == s.position) {
+      // get hero investement
+      invested = s.invested;
+    } else if (p == s.vs_position) {
+      // get villains investment
+      invested = s.vs_size;
+    }
+
+    return invested;
   }
 
   return (
@@ -207,7 +243,7 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
             {correctAnswer &&
               `${correctAnswer[0]}, ${Math.round(correctAnswer[1])}%`}
             <br />
-            User choice: {userChoice && `${userChoice[0]}, ${userChoice[1]}`}
+            User choice: {userChoice && `${userChoice}`}
             <br />
             Rng: {rng}
             <br />
@@ -228,7 +264,20 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
         </div>
       </div>
 
-      <Table positions={positions} heroCards={holecards} />
+      <Table>
+        {tablePositions.map((p) => {
+          return (
+            <Player
+              position={p}
+              key={p}
+              isHero={isHero(p)}
+              isVillain={isVillain(p)}
+              holecards={isHero(p) ? holecards : null}
+              invested={getInvested(p)}
+            />
+          );
+        })}
+      </Table>
 
       {userChoice && (
         <Answer
