@@ -14,11 +14,11 @@ export default function Player({
 
   function getCssActivePlayersString() {
     if (isHero) {
-      return "border-green";
+      return "border-green brightness-125 text-white";
     } else if (isVillain) {
-      return "border-yellow";
+      return "border-yellow brightness-125 text-white";
     } else {
-      return "border-gray";
+      return "border-gray text-gray";
     }
   }
 
@@ -70,7 +70,7 @@ export default function Player({
         </div>
       )}
       <div
-        className={`player-position w-24 h-24 flex items-center border-4 rounded-full ${cssClass}`}
+        className={`player-position w-24 h-24 flex items-center border-4 rounded-full bg-dark ${cssClass}`}
       >
         {position}
       </div>

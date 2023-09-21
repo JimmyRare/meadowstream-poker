@@ -32,6 +32,7 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [rng, setRng] = useState(null);
   const [answerObj, setAnswerObj] = useState(null);
+  const [lastAnswer, setLastAnswer] = useState(null);
 
   console.log("render", holecards);
 
@@ -114,19 +115,28 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
     return [card1, card2];
   }
 
-  function dealHeroCards() {
-    let range = getHeroRange();
-
+  function dealHeroCards(choice) {
     // save previous answer if it exists
-    if (userChoice) {
+    console.log("userChoice before deal new hand", choice);
+    if (choice) {
+      setLastAnswer({
+        userChoice: choice,
+        answerObj,
+        correctAnswer,
+      });
+
       onAddHistory({
-        userChoice,
+        choice,
         correctAnswer,
         answerObj,
         setHolecards,
         cardsString,
       });
+    } else {
+      setLastAnswer(null);
     }
+
+    let range = getHeroRange();
 
     // select cards from range
     let cards = range[Math.floor(Math.random() * range.length)];
@@ -191,13 +201,13 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
     setUserChoice(choice);
 
     if (isAutoHand) {
-      dealHeroCards();
+      dealHeroCards(choice);
     }
   }
 
   function onIsAutoHandToggle() {
     setIsAutoHand((a) => !a);
-    dealHeroCards();
+    dealHeroCards(null);
   }
 
   function isHero(p) {
@@ -279,25 +289,24 @@ export default function Trainer({ positions, scenarios, onAddHistory }) {
         })}
       </Table>
 
-      {userChoice && (
-        <Answer
-          correctAnswer={correctAnswer}
-          userChoice={userChoice}
-          answerObj={answerObj}
-        />
-      )}
+      <Answer
+        correctAnswer={isAutoHand ? lastAnswer?.correctAnswer : correctAnswer}
+        userChoice={isAutoHand ? lastAnswer?.userChoice : userChoice}
+        answerObj={isAutoHand ? lastAnswer?.answerObj : answerObj}
+      />
 
-      {!userChoice && holecards && (
+      {holecards && (
         <Choices
           filteredScenarios={filteredScenarios}
           onChoiceChange={handleChoice}
+          disabled={userChoice !== null}
         />
       )}
 
       <button
         type="button"
         className="disabled:bg-gray disabled:translate-y-0 disabled:opacity-10 text-white text-2xl mt-2 self-end active:translate-y-1 bg-green text-center rounded p-4 font-black drop-shadow cursor-pointer"
-        onClick={dealHeroCards}
+        onClick={() => dealHeroCards(null)}
         disabled={isAutoHand}
       >
         New hand

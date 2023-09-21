@@ -1,6 +1,10 @@
 import { actionsMap } from "../constants";
 
-export default function Choices({ filteredScenarios, onChoiceChange }) {
+export default function Choices({
+  filteredScenarios,
+  onChoiceChange,
+  disabled,
+}) {
   let sortedScenarios = Array(4);
 
   filteredScenarios.map((s) => {
@@ -28,10 +32,11 @@ export default function Choices({ filteredScenarios, onChoiceChange }) {
         return (
           scenario && (
             <button
+              disabled={disabled}
               key={scenario}
               onClick={() => onChoiceChange(scenario)}
               type="button"
-              className={`button button-${scenario.toLowerCase()} font-black active:translate-y-1`} // #todo constant logic
+              className={`button button-${scenario.toLowerCase()} disabled:bg-gray disabled:translate-y-0 disabled:opacity-10 font-black active:translate-y-1`} // #todo constant logic
             >
               {scenario}
             </button>
